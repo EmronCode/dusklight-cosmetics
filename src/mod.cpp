@@ -366,7 +366,7 @@ void on_open_cosmetics_menu(ModContext*, void*) {
     desc.tab_count = ARRAY_SIZE(tabs);
     desc.on_closed = on_cosmetics_menu_window_closed;
     if (svc_ui->window_push(mod_ctx, &desc, &g_cosmeticsWindow) != MOD_OK) {
-        svc_log->error(mod_ctx, "failed to open basic cosmetics window");
+        svc_log->error(mod_ctx, "failed to open cosmetics window");
     }
 }
 
@@ -563,7 +563,7 @@ void unregister_all_texture_handles() {
 
 extern "C" {
 MOD_EXPORT ModResult mod_initialize(ModError* error) {
-    svc_log->info(mod_ctx, "basic_cosmetics_mod initialized");
+    svc_log->info(mod_ctx, "cosmetics initialized");
 
     ModResult result{};
 
@@ -641,7 +641,7 @@ MOD_EXPORT ModResult mod_update(ModError*) {
 }
 
 MOD_EXPORT ModResult mod_shutdown(ModError*) {
-    svc_log->info(mod_ctx, "basic_cosmetics_mod unloaded");
+    svc_log->info(mod_ctx, "cosmetics unloaded");
     g_cosmeticsWindow = 0;
     remove_all_hooks();
     unregister_all_texture_handles();

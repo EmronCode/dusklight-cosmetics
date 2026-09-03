@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(cosmetics_mod CXX)
+project(cosmetics CXX)
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     # Fetch dusklight if we are invoking this as the root CMakeLists.txt
@@ -18,7 +18,7 @@ endif ()
 
 include(FetchContent)
 
-message(STATUS "cosmetics_mod: Fetching xxhash")
+message(STATUS "cosmetics: Fetching xxhash")
 FetchContent_Declare(
         xxhash
         GIT_REPOSITORY https://github.com/Cyan4973/xxHash.git
@@ -34,7 +34,7 @@ FetchContent_MakeAvailable(xxhash)
 
 set(COSMETICS_SOURCES src/color_utils.cpp src/midna_hair_color.cpp src/texture_utils.cpp src/hooks.cpp)
 
-add_mod(cosmetics_mod
+add_mod(cosmetics
     FEATURES game fmt
     SOURCES  src/mod.cpp ${COSMETICS_SOURCES}
     MOD_JSON mod.json
@@ -42,4 +42,4 @@ add_mod(cosmetics_mod
     BUNDLE
 )
 
-target_link_libraries(cosmetics_mod PRIVATE xxHash::xxhash)
+target_link_libraries(cosmetics PRIVATE xxHash::xxhash)

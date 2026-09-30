@@ -1,5 +1,6 @@
 #include "mod.hpp"
 #include "color_utils.hpp"
+#include "hd_texture.hpp"
 #include "hooks.hpp"
 #include "midna_hair_color.hpp"
 #include "texture_utils.hpp"
@@ -506,10 +507,36 @@ ModResult check_and_set_recolored_textures() {
                 curColor.value().g != color.g || curColor.value().b != color.b)
             {
                 // Make a copy of the base texture data to recolor
-                auto newTexture = replacement.baseTextureData;
-                recolor_texture(replacement, color, newTexture);
-
+                std::vector<uint8_t> newTexture;
                 TextureData newTextureData = replacement.data;
+
+                // Prefer the HD replacement when one is available.
+                if (auto hdTexture = load_hd_texture(replacement.key)) {
+                    recolor_hd_texture(*hdTexture, color);
+
+                    // Move the decoded RGBA pixels into the registration buffer without copying them.
+                    newTexture = std::move(hdTexture->rgba);
+
+                    // The HD texture has different dimensions and uses uncompressed RGBA8 data.
+                    newTextureData.width = hdTexture->width;
+                    newTextureData.height = hdTexture->height;
+                    newTextureData.mip_count = 1;
+                    newTextureData.gx_format = GX_TF_RGBA8_PC;
+
+                    mods::log::info(
+                        "Using HD recolored texture for {}: {}x{}",
+                        replacement.textureName,
+                        newTextureData.width,
+                        newTextureData.height);
+                } else {
+                    // Fall back to recoloring the original GameCube texture.
+                    newTexture = replacement.baseTextureData;
+                    recolor_texture(replacement, color, newTexture);
+
+                    // recolor_texture may change the texture format, so refresh the metadata afterward.
+                    newTextureData = replacement.data;
+                }
+
                 newTextureData.data = newTexture.data();
                 newTextureData.size = newTexture.size();
 

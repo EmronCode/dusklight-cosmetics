@@ -32,7 +32,7 @@ option(BUILD_SHARED_LIBS "Build shared libs" OFF)
 
 FetchContent_MakeAvailable(xxhash)
 
-set(COSMETICS_SOURCES src/color_utils.cpp src/midna_hair_color.cpp src/texture_utils.cpp src/hooks.cpp)
+set(COSMETICS_SOURCES src/color_utils.cpp src/midna_hair_color.cpp src/texture_utils.cpp src/hooks.cpp src/hd_texture.cpp)
 
 add_mod(cosmetics
     FEATURES game fmt
@@ -43,3 +43,7 @@ add_mod(cosmetics
 )
 
 target_link_libraries(cosmetics PRIVATE xxHash::xxhash)
+
+if (MSVC)
+    target_compile_options(cosmetics PRIVATE /Zc:inline-)
+endif()
